@@ -17,5 +17,7 @@ defmodule Chat.Accounts.Account do
     account
     |> cast(attrs, [:name, :email, :password])
     |> validate_required([:name, :email, :password])
+    |> validate_length(:name, min: 3, max: 20)
+    |> validate_length(:email, max: 52)
   end
 end
