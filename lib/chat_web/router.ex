@@ -20,6 +20,7 @@ defmodule ChatWeb.Router do
     # get "/", PageController, :home
     live "/", Home.IndexLive
     live "/create-account", CreateAccount.CreateAccountLive
+    live "/login", Login.LoginLive
   end
 
   # Other scopes may use custom stacks.

@@ -47,7 +47,7 @@ defmodule ChatWeb.CreateAccount.CreateAccountLive do
               Create account
             </.button>
         </.form>
-        <.link class="text-lg flex flex-col items-center group">
+        <.link navigate={~p"/login"}class="text-lg flex flex-col items-center group">
           Already have an account  
           <div class="w-1/2 bg-gray-900 h-1.5 rounded transition-all duration-700 group-hover:w-full group-hover:bg-yellow-400"/>
         </.link>
