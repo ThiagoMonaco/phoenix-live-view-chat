@@ -14,7 +14,6 @@ defmodule ChatWeb.CreateAccount.CreateAccountLive do
       |> Accounts.change_account(params)
       |> Map.put(:action, :validate)
 
-    IO.inspect(changeset)
     {:noreply, assign(socket, :form, to_form(changeset))}
   end 
 

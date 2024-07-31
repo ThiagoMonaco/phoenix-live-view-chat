@@ -51,8 +51,7 @@ defmodule Chat.Accounts do
   """
   def create_account(attrs \\ %{}) do
     %Account{}
-    |> Account.changeset(attrs)
-    # |> put_change(:password)
+    |> Account.changeset(attrs, :create)
     |> Repo.insert()
   end
 
