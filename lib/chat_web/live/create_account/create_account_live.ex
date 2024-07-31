@@ -14,8 +14,19 @@ defmodule ChatWeb.CreateAccount.CreateAccountLive do
       |> Accounts.change_account(params)
       |> Map.put(:action, :validate)
 
+    IO.inspect(changeset)
     {:noreply, assign(socket, :form, to_form(changeset))}
   end 
+
+  def handle_event("save", %{"account" => params}, socket) do
+    case Accounts.create_account(params) do
+      {:ok, _account} ->
+        {:noreply, socket}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :form, to_form(changeset))}
+    end 
+  end
 
   def render(assigns) do
     ~H"""

@@ -19,5 +19,11 @@ defmodule Chat.Accounts.Account do
     |> validate_required([:name, :email, :password])
     |> validate_length(:name, min: 3, max: 20)
     |> validate_length(:email, max: 52)
+    |> validate_format(:password, ~r/[0-9]+/, message: "Password must contain a number") 
+    |> validate_format(:password, ~r/[A-Z]+/, message: "Password must contain an upper-case letter")
+    |> validate_format(:password, ~r/[a-z]+/, message: "Password must contain a lower-case letter")
+    |> unique_constraint(:email, name: :account_email_index)
+    |> unique_constraint(:name, name: :account_name_index)
+    |> validate_format(:password, ~r/[#\!\?&@\$%^&*\(\)]+/, message: "Password must contain a symbol")
   end
 end
