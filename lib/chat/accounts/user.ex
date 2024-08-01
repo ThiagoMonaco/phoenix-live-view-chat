@@ -4,6 +4,7 @@ defmodule Chat.Accounts.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
+    field :name, :string
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -40,7 +41,15 @@ defmodule Chat.Accounts.User do
     user
     |> cast(attrs, [:email, :password])
     |> validate_email(opts)
+    |> validate_name(opts)
     |> validate_password(opts)
+  end
+
+  defp validate_name(changeset, opts) do
+    changeset
+    |> validate_required([:name])
+    |> validate_length(:name, max: 30)
+    |> maybe_validate_unique_name(opts)
   end
 
   defp validate_email(changeset, opts) do
@@ -90,6 +99,15 @@ defmodule Chat.Accounts.User do
     end
   end
 
+ defp maybe_validate_unique_name(changeset, opts) do
+    if Keyword.get(opts, :validate_name, true) do
+      changeset
+      |> unsafe_validate_unique(:name, Chat.Repo)
+      |> unique_constraint(:name)
+    else
+      changeset
+    end
+  end
   @doc """
   A user changeset for changing the email.
 
