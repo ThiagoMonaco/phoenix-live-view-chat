@@ -1,4 +1,4 @@
-defmodule ChatWeb.Home.IndexLive do
+defmodule ChatWeb.IndexLive do
   use ChatWeb, :live_view 
 
   def mount(_params, _session, socket) do
@@ -21,7 +21,7 @@ defmodule ChatWeb.Home.IndexLive do
       </div> 
       <div class="mt-5 flex justify-center">
         <.link
-          patch={~p"/create-account"} 
+          patch={~p"/users/register"} 
           class="rounded-lg bg-yellow-400 text-2xl p-2 text-gray-950 hover:bg-yellow-300 transition ease-in-out"
         >
           Create an account
