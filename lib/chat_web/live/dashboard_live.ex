@@ -10,7 +10,7 @@ defmodule ChatWeb.DashboardLive do
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Chat.PubSub, @topic)
       {:ok, _} = Presence.track(self(), @topic, current_user.id, %{
-        username: current_user.email |> String.split("@") |> hd(),
+        name: current_user.name
       })
     end
 
@@ -54,7 +54,7 @@ defmodule ChatWeb.DashboardLive do
         <h1>Dashboard</h1>
         <li :for={{_, meta} <- @presences}>
             <span class="username">
-              <%= meta.username %>
+              <%= meta.name %>
             </span>
           </li>
       </div>

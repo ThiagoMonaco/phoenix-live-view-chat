@@ -31,6 +31,7 @@ defmodule ChatWeb.UserRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
+        <.input phx-debounce="blur" field={@form[:name]} label="Name" required />
         <.input phx-debounce="blur" field={@form[:email]} type="email" label="Email" required />
         <.input phx-debounce="blur" field={@form[:password]} type="password" label="Password" required />
 
@@ -72,6 +73,7 @@ defmodule ChatWeb.UserRegistrationLive do
 
   def handle_event("validate", %{"user" => user_params}, socket) do
     changeset = Accounts.change_user_registration(%User{}, user_params)
+    IO.inspect(changeset, label: "changeset")
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
