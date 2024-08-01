@@ -19,12 +19,18 @@ defmodule ChatWeb.IndexLive do
           To get started, create an account and start chatting! 
         </p>
       </div> 
-      <div class="mt-5 flex justify-center">
+      <div class="mt-5 flex justify-center flex-col text-center gap-6 items-center">
         <.link
           patch={~p"/users/register"} 
           class="rounded-lg bg-yellow-400 text-2xl p-2 text-gray-950 hover:bg-yellow-300 transition ease-in-out"
         >
           Create an account
+        </.link>
+        <.link
+          patch={~p"/users/log_in"} 
+          class="rounded-lg text-yellow-400 text-2xl p-2 bg-gray-950 hover:bg-gray-700 transition ease-in-out"
+        >
+          Log in 
         </.link>
       </div>
     </div>
