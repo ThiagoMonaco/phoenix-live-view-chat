@@ -12,13 +12,13 @@ defmodule Chat.Application do
       Chat.Repo,
       {DNSCluster, query: Application.get_env(:chat, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Chat.PubSub},
+      ChatWeb.Presence,
       # Start the Finch HTTP client for sending emails
       {Finch, name: Chat.Finch},
       # Start a worker by calling: Chat.Worker.start_link(arg)
       # {Chat.Worker, arg},
       # Start to serve requests, typically the last entry
-      ChatWeb.Endpoint,
-      ChatWeb.Presence
+      ChatWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
