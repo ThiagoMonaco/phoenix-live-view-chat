@@ -5,6 +5,7 @@ defmodule Chat.Rooms do
   import Ecto.Query
 
   @topic_rooms "rooms:lobby"
+  @topic_single_rooms "rooms:"
 
   def subscribe do
     Phoenix.PubSub.subscribe(Chat.PubSub, @topic_rooms) 
@@ -38,5 +39,20 @@ defmodule Chat.Rooms do
   def list_rooms() do
     from(r in Room)
     |> Repo.all()
+  end
+
+  defp get_topic_slug(slug) do
+    "#{@topic_single_rooms}:#{slug}"
+  end
+
+  def join_room(slug, user_id, name) do
+    ChatWeb.Presence.track(self(), get_topic_slug(slug), user_id, %{
+      name: name
+    })
+    Phoenix.PubSub.subscribe(Chat.PubSub, "#{@topic_single_rooms}:#{slug}")
+  end
+
+  def list_users_room(slug) do
+    ChatWeb.Presence.list(get_topic_slug(slug))
   end
 end

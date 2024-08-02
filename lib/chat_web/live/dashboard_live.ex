@@ -19,13 +19,17 @@ defmodule ChatWeb.DashboardLive do
       Rooms.subscribe()
     end
 
+    changeset = Room.changeset(%Room{}, %{})
+
     presences = Presence.list(@topic_users_online)
     
     rooms = Rooms.list_rooms()
     socket =
       socket
       |> stream(:rooms, rooms)
+      |> assign(:form, to_form(changeset))
       |> assign(:presences, simple_presence_map(presences))
+
 
     {:ok, socket}
   end
@@ -51,10 +55,10 @@ defmodule ChatWeb.DashboardLive do
     assign(socket, :presences, presences)
   end
   
-  def handle_event("create_room", _, socket) do
+  def handle_event("create_room", %{"room" => params}, socket) do
     %{current_user: current_user} = socket.assigns
-    # Phoenix.PubSub.broadcast(Chat.PubSub, @topic_rooms, )
-    Rooms.create_room("nomepadrao", current_user.id)
+    Rooms.create_room(params["name"], current_user.id)
+
     {:noreply, socket}
   end
 
@@ -75,14 +79,33 @@ defmodule ChatWeb.DashboardLive do
     ~H""" 
       <div>
         <h1>Dashboard</h1>
-        <li :for={{_, meta} <- @presences}>
+        <div>
+        <li :for={{id, meta} <- @presences} :if={id != @current_user.id}>
+          <span class="username">
+            <%= meta.name %>
+          </span>
+        </li>
+        </div>
+        <div phx-update="stream" id="rooms">
+          <li :for={{_, meta} <- @streams.rooms}>
             <span class="username">
               <%= meta.name %>
             </span>
+            <.link patch={~p"/room/#{meta.slug}"} >
+              Join <%= meta.slug %>
+            </.link>
           </li>
-          <.button phx-click="create_room">
-            Create Room
-          </.button>
+        </div>
+       
+       <.form
+        for={@form}
+        phx-submit="create_room"
+       >
+        <.input phx-debounce="blur" field={@form[:name]} label="Name" required />
+         <.button>
+           Create Room
+         </.button>
+       </.form>
       </div>
     """
   end
