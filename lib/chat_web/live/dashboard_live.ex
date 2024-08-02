@@ -1,4 +1,5 @@
 defmodule ChatWeb.DashboardLive do
+  alias Phoenix.Presence
   alias Chat.Rooms.Room
   alias Chat.Rooms
   use ChatWeb, :live_view
@@ -28,30 +29,20 @@ defmodule ChatWeb.DashboardLive do
       socket
       |> stream(:rooms, rooms)
       |> assign(:form, to_form(changeset))
-      |> assign(:presences, simple_presence_map(presences))
-
+      |> assign(:presences, Presence.simple_presence_map(presences))
 
     {:ok, socket}
   end
 
-  def simple_presence_map(presences) do
-    Enum.into(presences, %{}, fn {user_id, %{metas: [meta | _]}} -> 
-      {user_id, meta}
-    end)
-  end
-
 
   defp remove_presences(socket, leaves) do
-    user_ids = Enum.map(leaves, fn {user_id, _} -> user_id end)
-
-    presences = Map.drop(socket.assigns.presences, user_ids)
-
+    presences = Presence.map_remove_presences(socket, leaves)
     assign(socket, :presences, presences)
   end
 
 
   defp add_presences(socket, joins) do
-    presences = Map.merge(socket.assigns.presences, simple_presence_map(joins)) 
+    presences = Presence.map_add_presences(socket, joins)
     assign(socket, :presences, presences)
   end
   
