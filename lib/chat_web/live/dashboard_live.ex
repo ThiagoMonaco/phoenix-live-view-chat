@@ -93,9 +93,9 @@ defmodule ChatWeb.DashboardLive do
         phx-submit="create_room"
        >
         <.input phx-debounce="blur" field={@form[:name]} label="Name" required />
-         <.button>
-           Create Room
-         </.button>
+        <.button>
+          Create Room
+        </.button>
        </.form>
       </div>
     """

@@ -1,4 +1,5 @@
 defmodule ChatWeb.RoomLive do
+  alias ChatWeb.ChatBoxLive
   alias Chat.Rooms
   alias Chat.Rooms.Room
   alias ChatWeb.Presence
@@ -18,19 +19,18 @@ defmodule ChatWeb.RoomLive do
     {:ok, socket}
   end
 
-  # defp remove_presences(socket, leaves) do
-  #   presences = Presence.map_remove_presences(socket, leaves)
-  #   assign(socket, :presences, presences)
-  # end
-  #
-  #
-  # defp add_presences(socket, joins) do
-  #   presences = Presence.map_add_presences(socket, joins)
-  #   assign(socket, :presences, presences)
-  # end
+  defp remove_presences(socket, leaves) do
+    presences = Presence.map_remove_presences(socket, leaves)
+    assign(socket, :presences, presences)
+  end
+
+
+  defp add_presences(socket, joins) do
+    presences = Presence.map_add_presences(socket, joins)
+    assign(socket, :presences, presences)
+  end
 
   def handle_info(%{event: "presence_diff", payload: diff}, socket) do
-    IO.inspect(diff, label: "difff")
     socket = 
       socket
       |> remove_presences(diff.leaves)
@@ -38,20 +38,6 @@ defmodule ChatWeb.RoomLive do
 
     {:noreply, socket}
   end
-
-  defp add_presences(socket, joins) do
-    Presence.simple_presence_map(joins)
-    |> Enum.reduce(socket, fn {user_id, meta}, socket ->
-      update(socket, :presences, &Map.put(&1, user_id, meta))
-    end)
-  end
-
-  defp remove_presences(socket, leaves) do
-    Presence.simple_presence_map(leaves)
-    |> Enum.reduce(socket, fn {user_id, _}, socket ->
-      update(socket, :presences, &Map.delete(&1, user_id))
-  end)
-end
 
   def render(assigns) do
     ~H"""
@@ -65,6 +51,7 @@ end
               </span>
             </li>
           </div>
+          <.live_component module={ChatBoxLive} id={:chat_box} current_user={@current_user}/>
         </div>
       </div>
     """
