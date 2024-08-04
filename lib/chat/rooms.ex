@@ -49,10 +49,14 @@ defmodule Chat.Rooms do
     ChatWeb.Presence.track(self(), get_topic_slug(slug), user_id, %{
       name: name
     })
-    Phoenix.PubSub.subscribe(Chat.PubSub, "#{@topic_single_rooms}:#{slug}")
+    Phoenix.PubSub.subscribe(Chat.PubSub, get_topic_slug(slug))
   end
 
   def list_users_room(slug) do
     ChatWeb.Presence.list(get_topic_slug(slug))
+  end
+
+  def send_message(slug, message) do
+    Phoenix.PubSub.broadcast(Chat.PubSub, get_topic_slug(slug), {:message_send, message})
   end
 end

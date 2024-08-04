@@ -1,5 +1,5 @@
 defmodule ChatWeb.ChatBoxLive do
-  alias Ecto.UUID
+  alias Chat.Rooms
   alias Chat.ChatMessage
   use ChatWeb, :live_component
 
@@ -17,15 +17,39 @@ defmodule ChatWeb.ChatBoxLive do
   def handle_event("save", %{"chat_message" => params}, socket) do
     %{current_user: current_user} = socket.assigns
     message = ChatMessage.create_message(params["text"], current_user.name, current_user.id)
-
-    IO.inspect(message)
     
-    socket = stream_insert(socket, :messages, message)
+    changeset = ChatMessage.changeset(%ChatMessage{}, %{})
 
-    IO.inspect(socket)
+    socket = assign(socket, :form, to_form(changeset))
+
+    send(self(), {:created_message, message})
 
     {:noreply, socket}
   end
+  
+  def handle_event("validate", %{"chat_message" => params}, socket) do
+    changeset =
+      %ChatMessage{}
+      |> ChatMessage.changeset(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :form, to_form(changeset))}
+  end
+  def update(assigns, socket) do
+    socket = if Map.has_key?(assigns, :new_message) do
+      stream_insert(socket, :messages, assigns.new_message)
+    else
+      socket
+    end
+
+    socket = 
+      socket
+      |> assign(assigns)
+    {:ok, socket}
+  end
+
+
+
 
   def render(assigns) do
     ~H"""
@@ -35,6 +59,7 @@ defmodule ChatWeb.ChatBoxLive do
           <.form
             for={@form}
             phx-submit="save" 
+            phx-change="validate"
             phx-target={@myself}
           >
           <.input phx-debounce="blur" field={@form[:text]} required />
@@ -44,7 +69,7 @@ defmodule ChatWeb.ChatBoxLive do
           </.form>
           <div id="messages" phx-update="stream">
             <div
-              :for={{text, owner_name} <- @streams.messages}
+              :for={{_text, owner_name} <- @streams.messages}
             >
               <%= owner_name.text %>
             </div>

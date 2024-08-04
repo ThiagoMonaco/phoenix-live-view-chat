@@ -15,6 +15,7 @@ defmodule ChatWeb.RoomLive do
     socket =
       socket
       |> assign(:presences, Presence.simple_presence_map(users))
+      |> assign(:slug, slug)
     
     {:ok, socket}
   end
@@ -23,7 +24,6 @@ defmodule ChatWeb.RoomLive do
     presences = Presence.map_remove_presences(socket, leaves)
     assign(socket, :presences, presences)
   end
-
 
   defp add_presences(socket, joins) do
     presences = Presence.map_add_presences(socket, joins)
@@ -36,6 +36,16 @@ defmodule ChatWeb.RoomLive do
       |> remove_presences(diff.leaves)
       |> add_presences(diff.joins)
 
+    {:noreply, socket}
+  end
+
+  def handle_info({:created_message, message}, socket) do
+    Rooms.send_message(socket.assigns.slug, message)
+    {:noreply, socket}
+  end
+
+  def handle_info({:message_send, message}, socket) do
+    send_update(ChatBoxLive, new_message: message, id: :chat_box)
     {:noreply, socket}
   end
 
