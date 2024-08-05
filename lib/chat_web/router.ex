@@ -21,7 +21,7 @@ defmodule ChatWeb.Router do
     pipe_through :browser
 
     # get "/", PageController, :home
-    live "/", IndexLive
+    # live "/", IndexLive
   end
 
   # Other scopes may use custom stacks.
@@ -83,6 +83,7 @@ defmodule ChatWeb.Router do
       on_mount: [{ChatWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
+      live "/", IndexLive
     end
   end
 end

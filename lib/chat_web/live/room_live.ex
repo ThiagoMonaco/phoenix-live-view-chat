@@ -22,6 +22,7 @@ defmodule ChatWeb.RoomLive do
 
   defp remove_presences(socket, leaves) do
     presences = Presence.map_remove_presences(socket, leaves)
+    IO.inspect(presences, label: "removeuuu")
     assign(socket, :presences, presences)
   end
 
